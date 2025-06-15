@@ -15,7 +15,8 @@ num_iterations = 150
 print("setting up SDR...\n")
 sdr = RtlSdr()
 sdr.sample_rate = 2.048e6  # Hz
-sdr.center_freq = 1420.405751768e6  # Hz
+sdr.center_freq = 1420.405751768e6 - 250e3  # Hz
+  # Hz
 sdr.bandwidth = 5e6 #Hz, 2 MHz
 sdr.freq_correction = 60  # PPM
 sdr.gain = 'auto'
@@ -27,7 +28,7 @@ for _ in range(num_iterations):
     print(f"Running on iteration {_} \n")
     samples = sdr.read_samples(256 * 1024)  # or appropriate size
     Pxx, freqs = psd(samples, NFFT=NFFT, Fs=sdr.sample_rate/1e6)
-    freqs += sdr.center_freq / 1e6  # Shift to true RF center frequency
+    freqs += sdr.   center_freq / 1e6  # Shift to true RF center frequency
     
     if avg_Pxx is None:
         avg_Pxx = Pxx
