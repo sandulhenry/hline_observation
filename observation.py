@@ -2,21 +2,29 @@ from pylab import *
 from rtlsdr import *
 import numpy as np
 from astropy.time import Time
-import time
+from datetime import datetime
 from matplotlib.colors import LightSource
+from scipy.signal import welch
+import gc
 
 # --- Setup SDR ---
+print("Setting up SDR...")
 sdr = RtlSdr()
 sdr.sample_rate = 2.048e6  # Hz
-sdr.center_freq = 1420.405751768e6 - 250e3  # Hz
-sdr.bandwidth = 2e6 #Hz, 10 MHz, (+5, -5)
-sdr.freq_correction = 60  # PPM
+sdr.center_freq = 1420.405751768e6 - 0.51e6  # Hz
+sdr.freq_correction = 32  # PPM
 sdr.gain = 'auto'
 
+floor_freq = 1420.405751768e6 - 0.5e6
+ceiling_freq = 1420.405751768e6 + 0.5e6
+
 NFFT = 1024
+num_samples = 256*1024 # number of samples per step
+num_steps = 10
+length_avg = 20
 
 # --- Load baseline for reuse ---
-bxc_Pxx = np.load('baseline_psd.npy')
+bxc_Pxx_dB = np.load('baseline_psd_dB.npy')
 bcx_freqs = np.load('baseline_freqs.npy')
 
 def average_sample(num_iterations):
@@ -24,47 +32,70 @@ def average_sample(num_iterations):
 
     # --- Estimate PSD ---
     for _ in range(num_iterations):
-        #print(f"Running on iteration {_} \n")
-        samples = sdr.read_samples(128 * 1024)  # or appropriate size
-        Pxx, freqs = psd(samples, NFFT=NFFT, Fs=sdr.sample_rate/1e6)
-        freqs += sdr.center_freq / 1e6  # Shift to true RF center frequency
+        #print(f"Running on iteration {_}")
+        try:
+            samples = sdr.read_samples(num_samples)
+        except Exception as e:
+            print(f"SDR read error: {e}, at time {Time.now()}")
+            continue
+        
+        freqs, Pxx = welch(samples, 
+                            fs=sdr.sample_rate, 
+                            nperseg=NFFT, 
+                            noverlap=NFFT//2, 
+                            return_onesided=False)
         
         if avg_Pxx is None:
             avg_Pxx = Pxx
         else:
             avg_Pxx += Pxx
-    time.sleep(0.2)
-
+        
     avg_Pxx /= num_iterations
 
-    Pxx_dB = 10 * np.log10(avg_Pxx)
-    bxc_Pxx_dB = 10 * np.log10(bxc_Pxx)
-    Pxx_obs_dB = Pxx_dB - bxc_Pxx_dB
+    freqs_centered = freqs + sdr.center_freq
+    mask = (freqs_centered >= floor_freq) & (freqs_centered <= ceiling_freq)
 
-    return Pxx_obs_dB, freqs
+    freqs_centered = freqs_centered[mask] / 1e6
+    avg_Pxx = avg_Pxx[mask]
 
-num_steps = 10
-time_vals = []
-power_matrix = []
-freqs = None
+    sorted_indices = np.argsort(freqs_centered)
+    freqs_centered = freqs_centered[sorted_indices]
+    avg_Pxx = avg_Pxx[sorted_indices]
+
+    Pxx_dB = 10 * np.log10(avg_Pxx + 1e-12)
+
+    Pxx_dB -= bxc_Pxx_dB
+
+    #normalization seems to cause standoffish problems
+    #min_psd = np.min(Pxx_dB)
+    #Pxx_dB = Pxx_dB - min_psd
+
+    return Pxx_dB
+
+print(f"SDR launched. Beginning on {num_steps} observations; {length_avg} per average; NFFT={NFFT}")
+
+power_mtx = np.zeros((num_steps, len(bcx_freqs)))
+time_vals = np.zeros(num_steps)
 
 for i in range(num_steps):
-    print(f"Working on avg FFT {i}")
-    time_now = Time.now().iso  # or .jd for Julian Date
-    Pxx_dB, freqs = average_sample(500)
-    time_vals.append(time_now)
-    power_matrix.append(Pxx_dB)
+    print(f"Working on avg FFT {i}, time is now {Time.now()} UTC")
+    Pxx_dB = average_sample(length_avg)
+    power_mtx[i, :] = Pxx_dB
+    time_vals[i] = Time.now().unix
+    del Pxx_dB
+    gc.collect()
 
 sdr.close()
 
-np.save("power_mtx.npy", power_matrix)
-np.save("time_vals.npy", time_vals)
-np.save("freqs", freqs)
+np.save("observations_raw/time_vals.npy", time_vals)
+np.save("observations_raw/freqs.npy", bcx_freqs)
+
+print("Finished sampling. Creating plot.")
 
 # --- Convert to arrays and meshgrid ---
 time_vals = np.array(time_vals)  # shape (T,)
-freqs = np.array(freqs)          # shape (F,)
-power_matrix = np.array(power_matrix)  # shape (T, F)
+freqs = np.array(bcx_freqs)          # shape (F,)
+power_matrix = np.array(power_mtx)  # shape (T, F)
 
 # Meshgrid to match plot_surface input format
 T, F = np.meshgrid(time_vals, freqs)
@@ -72,33 +103,25 @@ T, F = np.meshgrid(time_vals, freqs)
 # Transpose power matrix so it matches meshgrid orientation
 Z = power_matrix.T  # Now shape (F, T)
 
+title_string = f"Observation for {datetime.utcfromtimestamp(time_vals[0]).strftime('%H:%M:%S')}"
+
 # --- Plot ---
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
 surf = ax.plot_surface(T, F, Z, cmap=cm.viridis, linewidth=0, antialiased=False)
-ax.set_zlim(-5, 20)
-ax.set_xlabel('Time (Unix seconds)')
+ax.set_zlim(np.min(Z)-1, np.max(Z)+1)
+ax.set_xlabel('Time (HH:MM:SS) | UTC', labelpad=20)
 ax.set_ylabel('Frequency (MHz)')
 ax.set_zlabel('Power (dB)')
-plt.title("Time-Frequency PSD Surface")
 
-plt.show()
+def format_unix_time(x, _):
+    return datetime.utcfromtimestamp(x).strftime('%H:%M:%S')
 
+ax.xaxis.set_major_formatter(FuncFormatter(format_unix_time))
+plt.setp(ax.get_xticklabels(), rotation=30, ha='right')
+plt.title(title_string)
 
-'''
-Pxx, freqs = average_sample(100)
-
-sdr.close()
-
-
-# --- Plot ---
-plt.clf()
-plt.plot(freqs, Pxx)
-plt.ylim(-20,20)
-plt.xlabel("Frequency (MHz)")
-plt.ylabel("Power Difference (dB)")
-plt.title("PSD Difference (Observation - Baseline)")
-plt.grid()
-plt.show()
-'''
+#ax.view_init(elev=90, azim=90)
+file_path = "observations_img/" + title_string + ".png"
+plt.savefig(file_path)

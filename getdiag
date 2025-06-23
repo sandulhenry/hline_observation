@@ -1,0 +1,6 @@
+echo "The CPU temp is: "
+vcgencmd measure_temp
+echo "The CPU voltage is: "
+vcgencmd measure_volts
+echo "The throttle diag string is: "
+vcgencmd get_throttled
