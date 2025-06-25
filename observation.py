@@ -4,6 +4,7 @@ import numpy as np
 from astropy.time import Time
 from datetime import datetime
 from matplotlib.colors import LightSource
+from scipy.signal import medfilt
 from scipy.signal import welch
 import gc
 
@@ -12,7 +13,7 @@ print("Setting up SDR...")
 sdr = RtlSdr()
 sdr.sample_rate = 2.048e6  # Hz
 sdr.center_freq = 1420.405751768e6 - 0.51e6  # Hz
-sdr.freq_correction = 32  # PPM
+sdr.freq_correction = 7  # PPM
 sdr.gain = 'auto'
 
 floor_freq = 1420.405751768e6 - 0.5e6
@@ -20,8 +21,8 @@ ceiling_freq = 1420.405751768e6 + 0.5e6
 
 NFFT = 1024
 num_samples = 256*1024 # number of samples per step
-num_steps = 10
-length_avg = 20
+num_steps = 150
+length_avg = 750
 
 # --- Load baseline for reuse ---
 bxc_Pxx_dB = np.load('baseline_psd_dB.npy')
@@ -66,9 +67,11 @@ def average_sample(num_iterations):
 
     Pxx_dB -= bxc_Pxx_dB
 
+    Pxx_dB = medfilt(Pxx_dB, kernel_size=11)
+
     #normalization seems to cause standoffish problems
-    #min_psd = np.min(Pxx_dB)
-    #Pxx_dB = Pxx_dB - min_psd
+    median_psd = np.median(Pxx_dB)
+    Pxx_dB = Pxx_dB - median_psd
 
     return Pxx_dB
 
@@ -110,7 +113,7 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
 surf = ax.plot_surface(T, F, Z, cmap=cm.viridis, linewidth=0, antialiased=False)
-ax.set_zlim(np.min(Z)-1, np.max(Z)+1)
+ax.set_zlim(np.min(Z)-0.25, np.max(Z)+0.5)
 ax.set_xlabel('Time (HH:MM:SS) | UTC', labelpad=20)
 ax.set_ylabel('Frequency (MHz)')
 ax.set_zlabel('Power (dB)')

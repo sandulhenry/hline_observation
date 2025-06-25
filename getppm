@@ -1,0 +1,4 @@
+#!/bin/bash
+rtl_test -s 2048000 -p > ppm.log
+sleep 240 # sleep for 4 minutes; let ppm settle
+

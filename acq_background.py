@@ -15,14 +15,14 @@ NFFT = 1024
 # sdr.read_samples(x) pulls an x number of samples
 # at 256*1024/2.048e6 = 0.128 seconds per iteration
 # for 300 iterations, this is 38.4 seconds, times SIGNIFICANT processing time
-num_iterations = 100 #originally 300
+num_iterations = 500 #originally 300
 
 # --- Setup SDR ---
 print("Setting up SDR...")
 sdr = RtlSdr()
-sdr.sample_rate = 2.048e6  # Hz
+sdr.sample_rate = 2.048e6  # Hz = 2048000
 sdr.center_freq = 1420.405751768e6 - 0.51e6  # Hz
-sdr.freq_correction = 32  # PPM
+sdr.freq_correction = 20  # PPM
 sdr.gain = 'auto'
 
 floor_freq = 1420.405751768e6 - 0.5e6
