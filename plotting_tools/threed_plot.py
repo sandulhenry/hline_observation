@@ -1,4 +1,5 @@
 from matplotlib.colors import LightSource
+from matplotlib.ticker import ScalarFormatter
 from pylab import *
 import numpy as np
 from datetime import datetime
@@ -30,9 +31,13 @@ def make_3d_plot(file_path):
     ax = fig.add_subplot(111, projection='3d')
 
     surf = ax.plot_surface(T, F, Z, cmap=cm.viridis, linewidth=0, antialiased=False)
-    ax.set_zlim(np.min(Z)-0.25, np.max(Z)+0.5)
+    ax.set_zlim(np.min(Z)-0.1, np.max(Z)+0.1)
     ax.set_xlabel('Time (HH:MM:SS) | UTC', labelpad=20)
-    ax.set_ylabel('Frequency (MHz)')
+    yticks = [1419.906, 1420.156, 1420.406, 1420.656, 1420.906]
+
+    ax.set_yticks(yticks, minor=False)
+    ax.set_ylabel('Frequency (MHz)', labelpad = 15)
+
     ax.set_zlabel('Power (dB)')
 
     def format_unix_time(x, _):
@@ -42,7 +47,7 @@ def make_3d_plot(file_path):
     plt.setp(ax.get_xticklabels(), rotation=30, ha='right')
     plt.title(title_string)
 
-    #ax.view_init(elev=90, azim=90)
+    ax.view_init(elev=90, azim=90)
     save_path = "../observations_img/" + title_string + ".png"
 
     print("Saving into path " + save_path)
