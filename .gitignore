@@ -7,3 +7,7 @@ venv/
 
 __pycache__/
 */__pycache__/
+
+#ignore ppm diagnostic tools
+ppm_test.txt
+ppm.dat
