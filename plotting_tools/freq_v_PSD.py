@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 from scipy.signal import medfilt
 
-def time_v_PSD(file_path):
+def freq_v_PSD(file_path):
     time_vals = np.load(file_path + "/time_vals.npy")
     freqs = np.load(file_path + "/freqs.npy")
     power_mtx = np.load(file_path + "/power_mtx.npy")
@@ -33,4 +33,4 @@ def time_v_PSD(file_path):
     plt.savefig(save_path)
 
 if __name__ == "__main__":
-    time_v_PSD("../observations_raw")
+    freq_v_PSD("../observations_raw")

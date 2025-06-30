@@ -47,8 +47,8 @@ def make_3d_plot(file_path):
     plt.setp(ax.get_xticklabels(), rotation=30, ha='right')
     plt.title(title_string)
 
-    ax.view_init(elev=90, azim=90)
-    save_path = "../observations_img/" + title_string + ".png"
+    #ax.view_init(elev=90, azim=90)
+    save_path = "/home/pi/Documents/HLINE/hline_observation/observations_img/" + title_string + ".png"
 
     print("Saving into path " + save_path)
     plt.savefig(save_path)
