@@ -1,4 +1,10 @@
 #!/bin/bash
-rtl_test -s 2048000 -p > ppm.log
-sleep 240 # sleep for 4 minutes; let ppm settle
 
+# run rtl_test for a sample rate of x
+# 4 minutes is nessecary to let the PPM correction settle
+timeout 240s rtl_test -s 2048000 -p > ppm_test.txt
+
+last_ppm=$(tail -n 1 ppm_test.txt | grep -oE '[+-]?[0-9]+' | tail -n 1)
+
+echo "$last_ppm" > ppm.dat
+echo "Done. Single line in ppm.dat is ppm val"

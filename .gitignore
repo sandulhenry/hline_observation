@@ -2,3 +2,8 @@
 
 *.venv
 venv/
+
+#ignore pycach
+
+__pycache__/
+*/__pycache__/

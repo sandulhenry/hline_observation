@@ -7,6 +7,38 @@ from plotting_tools import make_3d_plot
 from scipy.signal import medfilt
 from scipy.signal import welch
 import gc
+import os, os.path
+import subprocess
+
+ppm = 0
+
+def get_ppm():
+    # check if getppm (exec) exists in the same directory
+    file_path = "/home/pi/Documents/HLINE/hline_observation/getppm"
+
+    if os.path.exists(file_path):
+        print(f"The file '{file_path}' exists.")    
+    else:
+        print(f"The file '{file_path}' does not exist.")
+
+    subprocess.run(file_path)
+
+    try:
+        with open('/home/pi/Documents/HLINE/hline_observation/ppm.dat', 'r') as file:
+            # Read the first line and remove leading/trailing whitespace
+            line = file.readline().strip() 
+            
+            # Convert the cleaned string to an integer
+            ppm = int(line) 
+            print(f"Successfully read ppm val: {ppm}")
+    except FileNotFoundError:
+        print("Error: The file 'ppm.dat' was not found.")
+    except ValueError:
+        print("Error: The content in the file is not a valid integer.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+    
+
 
 def observation(NFFT, num_steps, length_avg):
     # --- Setup SDR ---
@@ -14,7 +46,7 @@ def observation(NFFT, num_steps, length_avg):
     sdr = RtlSdr()
     sdr.sample_rate = 2.048e6  # Hz
     sdr.center_freq = 1420.405751768e6 - 0.51e6  # Hz
-    sdr.freq_correction = -9  # PPM
+    sdr.freq_correction = ppm  # PPM
     sdr.gain = 'auto'
 
     floor_freq = 1420.405751768e6 - 0.5e6
@@ -107,10 +139,12 @@ def observation(NFFT, num_steps, length_avg):
     #print("Finished sampling. Creating plot.")
 
 def main():
-    observation(NFFT = 1024, num_steps = 500, length_avg = 800)
-    print("completed observation")
+    #observation(NFFT = 1024, num_steps = 500, length_avg = 800)
+    #print("completed observation")
 
-    make_3d_plot("./observations_raw")
+    #make_3d_plot("./observations_raw")
+
+    get_ppm()
 
 if __name__ == "__main__":
     main()
