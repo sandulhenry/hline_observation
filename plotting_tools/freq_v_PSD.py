@@ -13,8 +13,8 @@ def freq_v_PSD(file_path):
     freqs = np.array(freqs)          # shape (F,)
     power_matrix = np.array(power_mtx)  # shape ()
 
-    for i in range(power_matrix.shape[0]):
-        power_matrix[i] = medfilt(power_matrix[i], kernel_size=45)
+    #for i in range(power_matrix.shape[0]):
+        #power_matrix[i] = medfilt(power_matrix[i], kernel_size=45)
 
     for i in range(power_matrix.shape[0]):
         plt.plot(freqs, power_matrix[i])
@@ -28,7 +28,7 @@ def freq_v_PSD(file_path):
 
     plt.title("Frequencies vs intensity at times")
 
-    save_path = "../observations_img/time_v_PSD/" + title_string + ".png"
+    save_path = "../observations_img/freq_v_PSD/" + title_string + ".png"
 
     plt.savefig(save_path)
 

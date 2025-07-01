@@ -15,8 +15,8 @@ def make_3d_plot(file_path):
     freqs = np.array(freqs)          # shape (F,)
     power_matrix = np.array(power_mtx)  # shape ()
 
-    for i in range(power_matrix.shape[0]):
-        power_matrix[i] = medfilt(power_matrix[i], kernel_size=45)
+    #for i in range(power_matrix.shape[0]):
+        #power_matrix[i] = medfilt(power_matrix[i], kernel_size=45)
 
     # Meshgrid to match plot_surface input format
     T, F = np.meshgrid(time_vals, freqs)
