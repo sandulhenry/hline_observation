@@ -12,6 +12,7 @@ pyerfa==2.0.1.5
 pyparsing==3.2.3
 pyrtlsdr==0.2.93
 python-dateutil==2.9.0.post0
+python-email==0.0.1
 PyYAML==6.0.2
 scipy==1.15.3
 six==1.17.0
