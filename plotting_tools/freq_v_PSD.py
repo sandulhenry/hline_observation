@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 from scipy.signal import medfilt
 
-def freq_v_PSD(file_path):
+def freq_v_PSD(file_path, hash: int):
     time_vals = np.load(file_path + "/time_vals.npy")
     freqs = np.load(file_path + "/freqs.npy")
     power_mtx = np.load(file_path + "/power_mtx.npy")
@@ -26,11 +26,13 @@ def freq_v_PSD(file_path):
 
     title_string = f"Observation for {datetime.utcfromtimestamp(time_vals[0]).strftime('%d,%m,%Y - %H:%M:%S')}"
 
-    plt.title("Frequencies vs intensity at times")
+    plt.title("Frequencies vs Intensity at Times")
 
-    save_path = "../observations_img/freq_v_PSD/" + title_string + ".png"
+    save_path = "/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) + "/freq_v_PSD.png"
+
+    print("Saving to " + save_path)
 
     plt.savefig(save_path)
 
 if __name__ == "__main__":
-    freq_v_PSD("../observations_raw")
+    freq_v_PSD("/home/pi/Documents/HLINE/hline_observation/observations_raw", 107567423320442100)

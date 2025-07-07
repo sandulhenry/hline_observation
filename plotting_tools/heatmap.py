@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 from scipy.signal import medfilt
 
-def make_heatmap(file_path):
+def make_heatmap(file_path, hash):
     time_vals = np.load(file_path + "/time_vals.npy")
     freqs = np.load(file_path + "/freqs.npy")
     power_mtx = np.load(file_path + "/power_mtx.npy")
@@ -43,10 +43,12 @@ def make_heatmap(file_path):
     title_string = f"Observation for {datetime.utcfromtimestamp(time_vals[0]).strftime('%d,%m,%Y - %H:%M:%S')}"
 
     plt.tight_layout()
-    plt.savefig("/home/pi/Documents/HLINE/hline_observation/observations_img/heatmap/" + title_string)
+
+    print("Saving to " + "/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) + "/heatmap.png")
+    plt.savefig("/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) + "/heatmap.png")
     plt.show()
 
 if __name__ == "__main__":
-    make_heatmap("../observations_raw")
+    make_heatmap("/home/pi/Documents/HLINE/hline_observation/observations_raw", 107567423320442100)
 
     

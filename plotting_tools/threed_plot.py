@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime
 from scipy.signal import medfilt
 
-def make_3d_plot(file_path):
+def make_3d_plot(file_path, hash):
     time_vals = np.load(file_path + "/time_vals.npy")
     freqs = np.load(file_path + "/freqs.npy")
     power_mtx = np.load(file_path + "/power_mtx.npy")
@@ -48,10 +48,10 @@ def make_3d_plot(file_path):
     plt.title(title_string)
 
     #ax.view_init(elev=90, azim=90)
-    save_path = "/home/pi/Documents/HLINE/hline_observation/observations_img/" + title_string + ".png"
+    save_path = "/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) + "/threeDplot.png"
 
-    print("Saving into path " + save_path)
+    print("Saving to " + save_path)
     plt.savefig(save_path)
 
 if __name__ == "__main__":
-    make_3d_plot("../observations_raw")
+    make_3d_plot("/home/pi/Documents/HLINE/hline_observation/observations_raw", 107567423320442100)
