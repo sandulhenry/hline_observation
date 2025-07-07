@@ -3,11 +3,19 @@
 *.venv
 venv/
 
-#ignore pycach
-
+#ignore pycache
 __pycache__/
 */__pycache__/
 
 #ignore ppm diagnostic tools
 ppm_test.txt
 ppm.dat
+
+#ignore observation images and raws
+observations_img/*
+observations_img
+observations_raw/*
+observations_raw/
+
+#ignore secrets
+secrets_email.py
