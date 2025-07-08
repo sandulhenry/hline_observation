@@ -19,3 +19,9 @@ observations_raw/
 
 #ignore secrets
 secrets_email.py
+
+#ignore local logs
+output.log
+
+#ignore test images
+Acquired Background test.png

@@ -15,7 +15,22 @@ def send_email(recipient: str, hash):
         msg['From'] = EMAIL_ADDRESS
         msg['To'] = recipient
         msg['Subject'] = "Hydrogen Line observation " + str(hash)
-        msg.attach(MIMEText("Attached are the results for your observation.", 'plain'))
+
+        body_string = f"""\
+Attached are the results of your observation.
+
+Your experiment ID is: {hash}
+
+Included attachments:
+- A 3D plot of Time vs Frequency vs Relative Gain
+- A heatmap of Time vs Frequency vs Relative Gain (color-coded)
+- A 2D plot of Frequency vs PSD for every iteration in your experiment
+
+Thank you so much for using this service! As someone who learned from open-source tools like this, it means a lot knowing people are engaging with something I built.
+
+- Sandul H.
+"""
+        msg.attach(MIMEText(body_string, 'plain'))
 
         with open(path + "/freq_v_PSD.png", 'rb') as file:
             attachment = MIMEApplication(file.read(), Name=path + "/freq_v_PSD.png") # Specify desired filename in email
@@ -32,8 +47,6 @@ def send_email(recipient: str, hash):
             server.login(EMAIL_ADDRESS, APP_PSWD)
             server.sendmail(EMAIL_ADDRESS, recipient, msg.as_string())
 
-        print("Email sent?")
+        print(f"Email sent to {recipient}. ")
     except Exception as e:
         print(f"Error thrown as {e}")
-
-send_email("sandul.henry.05@gmail.com", 730308819060215494)
