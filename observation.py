@@ -59,15 +59,15 @@ def get_ppm():
 # explicit Fourier Transform, Welch's method yields a smoother Power Spectral 
 # Density graph, by taking the FFT of many overlapping windows of a time-valued
 # signal, and taking the average of those. This is important because if a 
-# frequency is present in only one part of a signal, its effect is downplayed 
-# in Welch's method. 
+# frequency is present in only one part of a signal, its effect in the frequency
+# domain is downplayed  in Welch's method. 
 # 
 # sdr - the sdr object. Instead of recreating it inside avg_sample, let the 
 #       calling function pass this object.
 # num_iterations - the number of PSD to create, and to take the average of those
 # num_samples - the number of samples the SDR is expected to draw. 
 # NFFT - the resolution. For this program's bandwidth, this yields 500 
- #       frequencies (i think)
+#        frequencies (i think)
 def average_sample(sdr, num_iterations, num_samples, NFFT):
     avg_Pxx = None
 

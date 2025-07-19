@@ -7,7 +7,7 @@ from makeemail import send_email
 from plotting_tools import plot_all
 import os
 
-SERVER_URL = "http://192.168.1.32:5000"
+SERVER_URL = "https://hydrogenline-backend-f7becb704ae8.herokuapp.com/"
 
 # Run experiment is what carries out, compiles results, and emails them to the 
 # user. The use of an Experiment object, from experiment.py, is convenient for
@@ -18,18 +18,25 @@ def run_experiment(exp):
     
     print("Running on experiment with parameters ", exp)
 
-    timeexp(start = exp.start, 
-            end = exp.end, 
-            NFFT = 1024, 
-            length_avg = exp.num_iterations)
-    
-    newpath = "/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(exp.ID) 
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
+    try: 
+        timeexp(start = exp.start, 
+                end = exp.end, 
+                NFFT = 1024, 
+                length_avg = exp.num_iterations)
+        
+        newpath = "/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(exp.ID) 
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
 
-    plot_all("/home/pi/Documents/HLINE/hline_observation/observations_raw", exp.ID)
+        plot_all("/home/pi/Documents/HLINE/hline_observation/observations_raw", exp.ID)
 
-    send_email(recipient = exp.email, hash = exp.ID)
+        send_email(recipient = exp.email, hash = exp.ID)
+
+        print("Complete? marking done.")
+        requests.post(f"{SERVER_URL}/finished/{currExp.ID}")
+    except:
+        print("Error running on expirement", exp)
+        requests.post(f"{SERVER_URL}/failed/{currExp.ID}")
 
 # Poll and Run is the primary function within this code. It polls the backend 
 # every 5 minutes, and checks for the next task. If it is within its valid time-
@@ -66,8 +73,8 @@ def poll_and_run():
         except requests.RequestException as e:
             print(f"Error contacting server: {e}")
         
-        print("Waiting 5 minutes before next poll...")
-        time.sleep(300)  # 5 minutes
+        print("Waiting 1 minute(s) before next poll...")
+        time.sleep(60)  # 1 minutes
 
 if __name__ == "__main__":
     poll_and_run()
