@@ -6,8 +6,7 @@ from experiment import Experiment
 from makeemail import send_email
 from plotting_tools import plot_all
 import os
-
-SERVER_URL = "https://hydrogenline-backend-f7becb704ae8.herokuapp.com/"
+from secrets_email import SERVER_URL
 
 # Run experiment is what carries out, compiles results, and emails them to the 
 # user. The use of an Experiment object, from experiment.py, is convenient for
@@ -73,8 +72,8 @@ def poll_and_run():
         except requests.RequestException as e:
             print(f"Error contacting server: {e}")
         
-        print("Waiting 1 minute(s) before next poll...")
-        time.sleep(60)  # 1 minutes
+        print("Waiting 5 minute(s) before next poll...")
+        time.sleep(300)  # 5 minutes in seconds
 
 if __name__ == "__main__":
     poll_and_run()
