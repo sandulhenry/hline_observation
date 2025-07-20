@@ -32,10 +32,10 @@ def run_experiment(exp):
         send_email(recipient = exp.email, hash = exp.ID)
 
         print("Complete? marking done.")
-        requests.post(f"{SERVER_URL}/finished/{currExp.ID}")
+        requests.post(f"{SERVER_URL}/finished/{exp.ID}")
     except:
         print("Error running on expirement", exp)
-        requests.post(f"{SERVER_URL}/failed/{currExp.ID}")
+        requests.post(f"{SERVER_URL}/failed/{exp.ID}")
 
 # Poll and Run is the primary function within this code. It polls the backend 
 # every 5 minutes, and checks for the next task. If it is within its valid time-
