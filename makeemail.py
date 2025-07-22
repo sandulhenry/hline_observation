@@ -26,7 +26,7 @@ Included attachments:
 - A heatmap of Time vs Frequency vs Relative Gain (color-coded)
 - A 2D plot of Frequency vs PSD for every iteration in your experiment
 
-Thank you so much for using this service! As someone who learned from open-source tools like this, it means a lot knowing people are engaging with something I built. My hope is that anyone interested in the field has their interest sparked by this program. If you have any questions, or want to contribute to the antenna part of the program, please email me at s7henry@ucsd.edu, and check out https://www.https://github.com/sandulhenry/hline_observation. 
+Thank you so much for using this service! As someone who learned from open-source tools like this, it means a lot knowing people are engaging with something I built. My hope is that anyone interested in the field has their interest sparked by this program. If you have any questions, or want to contribute to the antenna part of the program, please email me at s7henry@ucsd.edu, and check out https://github.com/sandulhenry/hline_observation. 
 
 - Sandul H.
 """

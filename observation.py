@@ -28,7 +28,7 @@ def get_ppm():
     file_path = "/home/pi/Documents/HLINE/hline_observation/getppm"
 
     if os.path.exists(file_path):
-        print(f"The file '{file_path}' exists.")    
+        print(f"The file '{file_path}' exists.")
     else:
         print(f"The file '{file_path}' does not exist.")
 
@@ -147,7 +147,7 @@ def observation(NFFT, num_steps, length_avg):
 
     for i in range(num_steps):
         print(f"Working on avg FFT {i}, time is now {Time.now()} UTC")
-        Pxx_dB = average_sample(sdr, length_avg, num_samples, NFTT)
+        Pxx_dB = average_sample(sdr, length_avg, num_samples, NFFT)
         power_mtx[i, :] = Pxx_dB
         time_vals[i] = Time.now().unix
         del Pxx_dB

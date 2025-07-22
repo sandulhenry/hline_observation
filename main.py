@@ -33,8 +33,8 @@ def run_experiment(exp):
 
         print("Complete? marking done.")
         requests.post(f"{SERVER_URL}/finished/{exp.ID}")
-    except:
-        print("Error running on expirement", exp)
+    except Exception as e:
+        print(f"Error running on expirement {exp}: {e}")
         requests.post(f"{SERVER_URL}/failed/{exp.ID}")
 
 # Poll and Run is the primary function within this code. It polls the backend 
