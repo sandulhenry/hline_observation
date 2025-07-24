@@ -7,6 +7,7 @@ from makeemail import send_email
 from plotting_tools import plot_all
 import os
 from secrets_email import SERVER_URL
+import traceback
 
 # Run experiment is what carries out, compiles results, and emails them to the 
 # user. The use of an Experiment object, from experiment.py, is convenient for
@@ -36,6 +37,8 @@ def run_experiment(exp):
     except Exception as e:
         print(f"Error running on expirement {exp}: {e}")
         requests.post(f"{SERVER_URL}/failed/{exp.ID}")
+        
+        traceback.print_exc()
 
 # Poll and Run is the primary function within this code. It polls the backend 
 # every 5 minutes, and checks for the next task. If it is within its valid time-

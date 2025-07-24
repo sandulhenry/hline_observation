@@ -4,6 +4,7 @@ import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
+import traceback
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -31,16 +32,18 @@ Thank you so much for using this service! As someone who learned from open-sourc
 - Sandul H.
 """
         msg.attach(MIMEText(body_string, 'plain'))
+            
+        filenames = ["freq_v_PSD.png", "heatmap.png", "threeDplot.png"]
 
-        with open(path + "/freq_v_PSD.png", 'rb') as file:
-            attachment = MIMEApplication(file.read(), Name=path + "/freq_v_PSD.png") # Specify desired filename in email
-            msg.attach(attachment)
-        with open(path + "/heatmap.png", 'rb') as file:
-            attachment = MIMEApplication(file.read(), Name=path + "/heatmap.png") # Specify desired filename in email
-            msg.attach(attachment)
-        with open(path + "/threeDplot.png", 'rb') as file:
-            attachment = MIMEApplication(file.read(), Name=path + "/threeDplot.png") # Specify desired filename in email
-            msg.attach(attachment)
+        for fname in filenames:
+            fpath = os.path.join(path, fname)
+            if os.path.exists(fpath):
+                with open(fpath, 'rb') as file:
+                    attachment = MIMEApplication(file.read(), Name=fname)
+                    attachment['Content-Disposition'] = f'attachment; filename="{fname}"'
+                    msg.attach(attachment)
+            else:
+                print(f"Warning: File not found and skipped: {fpath}")
 
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
@@ -50,3 +53,4 @@ Thank you so much for using this service! As someone who learned from open-sourc
         print(f"Email sent to {recipient}. ")
     except Exception as e:
         print(f"Error thrown as {e}")
+        traceback.print_exc()

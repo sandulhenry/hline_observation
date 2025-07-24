@@ -2,6 +2,7 @@ from pylab import *
 import numpy as np
 from datetime import datetime
 from scipy.signal import medfilt
+import matplotlib.ticker as mticker
 
 def freq_v_PSD(file_path, hash: int):
     time_vals = np.load(file_path + "/time_vals.npy")
@@ -21,7 +22,12 @@ def freq_v_PSD(file_path, hash: int):
 
     plt.xlabel("Frequency (MHz)")
     plt.xticks(ticks = [1419.906, 1420.156, 1420.406, 1420.656, 1420.906])
-    plt.ticklabel_format(axis='x', style='plain', useOffset=False)
+    # plt.ticklabel_format(axis='x', style='plain', useOffset=False)
+
+    ax = plt.gca()
+    ax.xaxis.set_major_formatter(mticker.ScalarFormatter())
+    ax.ticklabel_format(axis='x', style='plain', useOffset=False)
+
     plt.ylabel("Relative Intensity (dB)")
 
     title_string = f"Observation for {datetime.utcfromtimestamp(time_vals[0]).strftime('%d,%m,%Y - %H:%M:%S')}"
