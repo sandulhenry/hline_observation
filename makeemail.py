@@ -9,6 +9,11 @@ import traceback
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
+# This file is specific to the use case of the website. If you also want to be 
+# emailed your own results, you must create a file called secrets_email.py in 
+# the main directory. It must contain the following, in the case of emails: 
+# EMAIL_ADDRESS, and APP_PSWD, set the terms of you gmail's insecure app 
+# password system
 def send_email(recipient: str, hash):
     try:
         path = "/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) 

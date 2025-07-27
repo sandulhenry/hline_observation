@@ -116,10 +116,12 @@ def average_sample(sdr, num_iterations, num_samples, NFFT):
     # LNA, and even changes with factors like temperature
     Pxx_dB = medfilt(Pxx_dB, kernel_size=45)
 
-    # normalization to the median works better that normalization to the min
-    # . The minimum could be spiking downwards, which leads to messy 
-    # behavior. In general, the median would never change. This lines up the 
-    # measurements at 0. 
+    # Normalization to the median should work better than normalization to the 
+    # minimum. If there is a spike downwards, that could create a problem for a 
+    # minimum normalization. Due to factors like temperature and environment, 
+    # the noise floor of the system may change. By adding a median filter, the 
+    # "center" of the frequency-domain signal should remain relatively at 0, as 
+    # the median of the signal should particularly change. 
     median_psd = np.median(Pxx_dB)
     Pxx_dB = Pxx_dB - median_psd
 

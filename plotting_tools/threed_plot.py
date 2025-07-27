@@ -52,6 +52,3 @@ def make_3d_plot(file_path, hash):
 
     print("Saving to " + save_path)
     plt.savefig(save_path)
-
-if __name__ == "__main__":
-    make_3d_plot("/home/pi/Documents/HLINE/hline_observation/observations_raw", 107567423320442100)

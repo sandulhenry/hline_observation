@@ -46,6 +46,11 @@ def run_experiment(exp):
 # problem of a experiment being defined, and having to wait 5 minutes is avoided 
 # in the backend. An experiment is still valid 5 minutes past its start date, 
 # therefore the function polling every x minutes works. 
+# 
+# In the backend, requesting /next_task will return the next task, up to ONE 
+# HOUR past its start date and time. This is to account for failures, but 
+# regardless, the system only takes two hour blocks. It would be likely that the 
+# next task is at least a few hours away from the start time
 def poll_and_run():
     while True:
         try:

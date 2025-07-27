@@ -48,7 +48,4 @@ def make_heatmap(file_path, hash):
     plt.savefig("/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) + "/heatmap.png")
     plt.show()
 
-if __name__ == "__main__":
-    make_heatmap("/home/pi/Documents/HLINE/hline_observation/observations_raw", 107567423320442100)
-
     
