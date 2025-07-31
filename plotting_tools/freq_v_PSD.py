@@ -39,3 +39,5 @@ def freq_v_PSD(file_path, hash: int):
     print("Saving to " + save_path)
 
     plt.savefig(save_path)
+    
+    plt.close()

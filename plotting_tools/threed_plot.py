@@ -52,3 +52,4 @@ def make_3d_plot(file_path, hash):
 
     print("Saving to " + save_path)
     plt.savefig(save_path)
+    plt.close()

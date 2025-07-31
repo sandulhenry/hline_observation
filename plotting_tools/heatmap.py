@@ -46,6 +46,6 @@ def make_heatmap(file_path, hash):
 
     print("Saving to " + "/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) + "/heatmap.png")
     plt.savefig("/home/pi/Documents/HLINE/hline_observation/observations_img/" + str(hash) + "/heatmap.png")
-    plt.show()
+    plt.close()
 
     
