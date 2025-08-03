@@ -106,5 +106,5 @@ ax.axvline(x=hydrogen_freq, color='red', linestyle='--', linewidth=1.5, label='H
 ax.legend()
 
 plt.tight_layout()
-plt.savefig("Acquired Background test 2 false.png")
+plt.savefig("Acquired Background.png")
 plt.show()
