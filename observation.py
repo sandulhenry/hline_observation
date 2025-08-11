@@ -114,7 +114,7 @@ def average_sample(sdr, num_iterations, num_samples, NFFT):
 
     # removes DC spikes. DC Spikes may be caused by the behavior of the SDR,
     # LNA, and even changes with factors like temperature
-    Pxx_dB = medfilt(Pxx_dB, kernel_size=45)
+    Pxx_dB = medfilt(Pxx_dB, kernel_size=35)
 
     # Normalization to the median should work better than normalization to the 
     # minimum. If there is a spike downwards, that could create a problem for a 
